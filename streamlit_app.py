@@ -1,13 +1,13 @@
-
 import streamlit as st
-import openai
+from openai import OpenAI
 
 st.set_page_config(page_title="Lunexa - AI Mood Journal", layout="centered")
 st.title("Lunexa")
 st.subheader("Your AI-powered mental wellness companion")
 st.markdown("---")
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Secure OpenAI key from Streamlit secrets
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.header("Daily Mood Check-In")
 input_mode = st.radio("Choose input method:", ("Text", "Voice (coming soon)"))
@@ -19,7 +19,7 @@ if input_mode == "Text":
             st.warning("Please enter something to analyze.")
         else:
             with st.spinner("Analyzing your mood..."):
-                response = openai.ChatCompletion.create(
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a compassionate mental health assistant. Analyze the emotional tone of the user's journal and give a mood score from 1 (very low) to 10 (very positive)."},
