@@ -23,7 +23,7 @@ if input_mode == "Text":
             with st.spinner("Analyzing your mood..."):
                 try:
                     response = openai.chat.completions.create(
-                        model="gpt-4",
+                        model="gpt-3.5-turbo",
                         messages=[
                             {"role": "system", "content": "You are a compassionate mental health assistant. Analyze the emotional tone of the user's journal and give a mood score from 1 (very low) to 10 (very positive)."},
                             {"role": "user", "content": user_input}
