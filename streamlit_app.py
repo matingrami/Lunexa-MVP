@@ -1,14 +1,16 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 
+# Set up page layout
 st.set_page_config(page_title="Lunexa - AI Mood Journal", layout="centered")
 st.title("Lunexa")
 st.subheader("Your AI-powered mental wellness companion")
 st.markdown("---")
 
-# Secure OpenAI key from Streamlit secrets
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Set OpenAI API key from secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+# Mood Check-In
 st.header("Daily Mood Check-In")
 input_mode = st.radio("Choose input method:", ("Text", "Voice (coming soon)"))
 
@@ -19,16 +21,19 @@ if input_mode == "Text":
             st.warning("Please enter something to analyze.")
         else:
             with st.spinner("Analyzing your mood..."):
-                response = client.chat.completions.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": "You are a compassionate mental health assistant. Analyze the emotional tone of the user's journal and give a mood score from 1 (very low) to 10 (very positive)."},
-                        {"role": "user", "content": user_input}
-                    ]
-                )
-                output = response.choices[0].message.content
-                st.success("Here's your mood analysis:")
-                st.write(output)
+                try:
+                    response = openai.ChatCompletion.create(
+                        model="gpt-4",
+                        messages=[
+                            {"role": "system", "content": "You are a compassionate mental health assistant. Analyze the emotional tone of the user's journal and give a mood score from 1 (very low) to 10 (very positive)."},
+                            {"role": "user", "content": user_input}
+                        ]
+                    )
+                    output = response.choices[0].message.content
+                    st.success("Here's your mood analysis:")
+                    st.write(output)
+                except Exception as e:
+                    st.error(f"Something went wrong: {e}")
 else:
     st.info("Voice input will be available soon. Stay tuned!")
 
